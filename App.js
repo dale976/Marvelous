@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import {Home, Profile} from './src/screens';
+import { Home, Favourites, Search, Settings } from './src/screens';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,9 +16,19 @@ export default function App() {
           options={{ title: 'Home' }}
         />
         <Stack.Screen
-          name='profile'
-          component={Profile}
-          options={{ title: 'Profile' }}
+          name='search'
+          component={Search}
+          options={{ title: 'Search' }}
+        />
+        <Stack.Screen
+          name='favourites'
+          component={Favourites}
+          options={{ title: 'Favourites' }}
+        />
+        <Stack.Screen
+          name='settings'
+          component={Settings}
+          options={{ title: 'Settings' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

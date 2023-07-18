@@ -7,9 +7,21 @@ export const Home = ({ navigation }) => {
             <Text>This is not so great!</Text>
             <StatusBar style="auto" />
             <Button
-                title="Go to Jane's profile"
+                title="Go to settings"
                 onPress={() =>
-                    navigation.navigate('profile', { name: 'Jane' })
+                    navigation.navigate('settings', { name: 'lottie' })
+                }
+            />
+            <Button
+                title="Go to search"
+                onPress={() =>
+                    navigation.navigate('search')
+                }
+            />
+            <Button
+                title="Go to favourites"
+                onPress={() =>
+                    navigation.navigate('favourites')
                 }
             />
         </View>
