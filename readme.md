@@ -1,0 +1,2 @@
+commands:
+npx expo start
