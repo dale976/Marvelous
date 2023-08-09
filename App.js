@@ -2,14 +2,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {Home, Favourites, Search, Settings} from './src/screens';
-import {GluestackUIProvider} from './src/components';
-import {config} from './gluestack-ui.config';
+import {ThemeProvider} from '@rneui/themed';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
     return (
-        <GluestackUIProvider config={config.theme}>
+        <ThemeProvider>
             <NavigationContainer>
                 <Stack.Navigator>
                     <Stack.Screen
@@ -34,7 +33,7 @@ export default function App() {
                     {/*/>*/}
                 </Stack.Navigator>
             </NavigationContainer>
-        </GluestackUIProvider>
+        </ThemeProvider>
     );
 }
 
