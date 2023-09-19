@@ -23,14 +23,19 @@ export const getThisWeeksComics = async () => {
     return req.data;
 }
 
+export const getComicById = async (id) => {
+    const req = await axios.get(`${apiUrl}/comics/${id}?${getAuthorizationString()}`);
+    return req.data;
+}
+
 export const getPopularCharacters = async () => {
-    const query = "&orderBy=-modified";
+    const query = "&orderBy=-modified&limit=12";
     const req = await axios.get(`${apiUrl}/events/238/characters?${getAuthorizationString()}${query}`);
     return req.data;
 }
 
 export const getLatestEvents = async () => {
-    const query = "&orderBy=-modified";
+    const query = "&orderBy=-modified&limit=12";
     const req = await axios.get(`${apiUrl}/series?${getAuthorizationString()}${query}`);
     return req.data;
 }
