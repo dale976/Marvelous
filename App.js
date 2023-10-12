@@ -7,6 +7,9 @@ import {ThemeProvider} from '@rneui/themed';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+
+
     return (
         <ThemeProvider>
             <NavigationContainer>
@@ -14,12 +17,12 @@ export default function App() {
                     <Stack.Screen
                         name='home'
                         component={Home}
-                        options={{title: 'Marvelous'}}
+                        options={{title: 'Home'}}
                     />
                     <Stack.Screen
                         name='details'
                         component={Details}
-                        options={{title: 'Marvelous'}}
+                        options={{title: 'Comic'}}
                     />
                     <Stack.Screen
                         name='search'

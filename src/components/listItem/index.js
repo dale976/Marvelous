@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 });
 
 export const ListItem = ({title, thumbnail}) => {
-    const uri = `${thumbnail.path}.${thumbnail.extension}`;
+    const uri = `${thumbnail?.path}.${thumbnail?.extension}`;
     return (
         <View style={styles.item}>
             <Image

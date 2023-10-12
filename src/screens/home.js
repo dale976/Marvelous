@@ -6,7 +6,7 @@ import {
     StyleSheet,
     View,
     SectionList,
-    TouchableHighlight
+    TouchableHighlight, ActivityIndicator
 } from 'react-native';
 
 import {useEffect, useState} from 'react';
@@ -35,6 +35,7 @@ export const Home = ({navigation}) => {
     const [newComics, setNewComics] = useState({});
     const [characters, setCharacters] = useState({})
     const [events, setEvents] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const sectionData = [
         {
@@ -54,14 +55,17 @@ export const Home = ({navigation}) => {
     useEffect(() => {
         if (!newComics.data) {
             getContent();
+            setLoading(true);
         }
 
         if (!characters.data) {
             getCharacters();
+            setLoading(true);
         }
 
         if (!events.data) {
             getEvents();
+            setLoading(true);
         }
 
     }, [newComics, characters])
@@ -75,16 +79,19 @@ export const Home = ({navigation}) => {
     const getContent = async () => {
         const data = await getThisWeeksComics();
         setNewComics(data);
+        setLoading(false);
     }
 
     const getCharacters = async () => {
         const data = await getPopularCharacters();
         setCharacters(data);
+        setLoading(false);
     }
 
     const getEvents = async () => {
         const data = await getLatestEvents();
         setEvents(data);
+        setLoading(false);
     }
 
     const renderItem = (item) => {
@@ -103,17 +110,18 @@ export const Home = ({navigation}) => {
             <SectionList style={styles.container}
                          sections={sectionData}
                          keyExtractor={(item, index) => item + index}
-                         ListHeaderComponent={<Header/>}
+                         ListHeaderComponent={isFirstVisit && (<Header/>)}
                          stickySectionHeadersEnabled={false}
                          renderItem={({item}) => (
                              <View>
-                                 <FlatList
+                                 {loading && (<ActivityIndicator/>) || !loading && (<FlatList
                                      data={item}
                                      renderItem={({item}) => renderItem(item)}
                                      keyExtractor={item => item.id}
                                      horizontal={true}
                                  >
-                                 </FlatList>
+                                 </FlatList>)}
+
                              </View>
                          )}
                          renderSectionHeader={({section: {title}}) => (

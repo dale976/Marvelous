@@ -19,7 +19,7 @@ const getAuthorizationString = () => {
 export const getThisWeeksComics = async () => {
     const query = "&dateDescriptor=thisWeek&offset=0&limit=12&orderBy=issueNumber";
     const req = await axios.get(`${apiUrl}/comics?${getAuthorizationString()}${query}`);
-    // console.log('RESPONSE: ', req.data)
+    console.log('RESPONSE: ', req)
     return req.data;
 }
 
@@ -34,8 +34,19 @@ export const getPopularCharacters = async () => {
     return req.data;
 }
 
+export const getCharacters = async (id) => {
+    const query = "&orderBy=-modified&limit=12";
+    const req = await axios.get(`${apiUrl}/comics/${id}/characters?${getAuthorizationString()}${query}`);
+    return req.data;
+}
+
 export const getLatestEvents = async () => {
     const query = "&orderBy=-modified&limit=12";
     const req = await axios.get(`${apiUrl}/series?${getAuthorizationString()}${query}`);
+    return req.data;
+}
+
+export const getStories = async (id) => {
+    const req = await axios.get(`${apiUrl}/stories/${id}?${getAuthorizationString()}`);
     return req.data;
 }
