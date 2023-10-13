@@ -1,10 +1,15 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import {Details, Home, Favourites, Search, Settings} from './src/screens';
+import {Details, Home, Favourites, Login, Search, Settings} from './src/screens';
 import {ThemeProvider} from '@rneui/themed';
 
 const Stack = createNativeStackNavigator();
+
+
+
+
+
 
 
 export default function App() {
@@ -12,6 +17,11 @@ export default function App() {
         <ThemeProvider>
             <NavigationContainer>
                 <Stack.Navigator>
+                    <Stack.Screen
+                        name='login'
+                        component={Login}
+                        options={{title: 'Sign In'}}
+                    />
                     <Stack.Screen
                         name='home'
                         component={Home}
@@ -22,11 +32,11 @@ export default function App() {
                         component={Details}
                         options={{title: 'Details'}}
                     />
-                    <Stack.Screen
-                        name='search'
-                        component={Search}
-                        options={{title: 'Search'}}
-                    />
+                    {/*<Stack.Screen*/}
+                    {/*    name='search'*/}
+                    {/*    component={Search}*/}
+                    {/*    options={{title: 'Search'}}*/}
+                    {/*/>*/}
                     {/*<Stack.Screen*/}
                     {/*    name='favourites'*/}
                     {/*    component={Favourites}*/}
