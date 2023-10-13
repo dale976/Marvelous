@@ -69,32 +69,33 @@ const styles = StyleSheet.create({
 })
 
 export const Details = ({ navigation, route }) => {
-    const {comic} = route.params
+    const {selectedItem} = route.params
     const [characters, setCharacters] = useState({});
     const [loading, setLoading] = useState(false);
-    const image = {uri: `${comic?.thumbnail?.path}.${comic?.thumbnail?.extension}`};
+    const image = {uri: `${selectedItem?.thumbnail?.path}.${selectedItem?.thumbnail?.extension}`};
 
     const sectionData = [
         {
-            title: "Characters",
+            title: "Featuring",
             data: [characters.data?.results]
         }
     ]
 
     useEffect(() => {
-        if (!characters.data && comic?.characters?.available > 0) {
+        if (!characters.data && selectedItem?.characters?.available > 0) {
             setLoading(true);
             fetchCharacters()
         }
     })
 
     const fetchCharacters = async () => {
-        const data = await getCharacters(comic.id);
+        const data = await getCharacters(selectedItem.id);
         setLoading(false);
         setCharacters(data);
     }
 
     const getSaleDate = (dates) => {
+        if(!dates) return null;
         const saleDate = dates.find(d => d.type === 'onsaleDate');
         let date;
         if (saleDate) {
@@ -104,6 +105,7 @@ export const Details = ({ navigation, route }) => {
     }
 
     const getSalePrice = (prices) => {
+        if(!prices) return null;
         const salePrice = prices.find(p => p.type === 'printPrice');
         return salePrice ? salePrice.price : null
 
@@ -113,7 +115,7 @@ export const Details = ({ navigation, route }) => {
         return (
             <TouchableHighlight
                 activeOpacity={0.6}
-                onPress={() => navigation.navigate('details', {comic: item})}
+                onPress={() => navigation.navigate('details', {selectedItem: item})}
             >
                 {<ListItem title={item.title} thumbnail={item.thumbnail}/>}
             </TouchableHighlight>
@@ -133,8 +135,8 @@ export const Details = ({ navigation, route }) => {
                         style={styles.linearGradient}
                     >
                         <View style={styles.textContainer}>
-                            <Text style={styles.title}>{comic.title}</Text>
-                            <View style={{flexDirection: "row"}}><Text style={styles.text}>On Sale: {getSaleDate(comic?.dates)}</Text><Text style={styles.text}>£{getSalePrice(comic?.prices)}</Text></View>
+                            <Text style={styles.title}>{selectedItem.title}</Text>
+                            <View style={{flexDirection: "row"}}><Text style={styles.text}>On Sale: {getSaleDate(selectedItem?.dates)}</Text><Text style={styles.text}>£{getSalePrice(selectedItem?.prices)}</Text></View>
                             {loading && <ActivityIndicator />}
                             {characters.data?.results && <SectionList
                                          sections={sectionData}

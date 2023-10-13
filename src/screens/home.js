@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import {useEffect, useState} from 'react';
-import {getLatestEvents, getPopularCharacters, getThisWeeksComics} from '../services/api';
+import {getPopularCharacters, getThisWeeksComics} from '../services/api';
 import {ListItem} from '../components/listItem';
 import {Header} from '../components/header';
 
@@ -32,43 +32,33 @@ const styles = StyleSheet.create({
 
 export const Home = ({navigation}) => {
     const [isFirstVisit, setIsFirstVisit] = useState();
-    const [newComics, setNewComics] = useState({});
+    const [comics, setComics] = useState([]);
     const [characters, setCharacters] = useState({})
-    const [events, setEvents] = useState({});
     const [loading, setLoading] = useState(false);
 
     const sectionData = [
         {
             title: "This weeks new releases",
-            data: [newComics.data?.results]
+            data: [comics]
         },
         {
             title: "Popular characters",
-            data: [characters.data?.results]
+            data: [characters]
         },
-        {
-            title: "Latest events",
-            data: [events.data?.results]
-        }
     ]
 
     useEffect(() => {
-        if (!newComics.data) {
+        if (!comics.length > 0) {
             getContent();
             setLoading(true);
         }
 
-        if (!characters.data) {
+        if (!characters.length > 0) {
             getCharacters();
             setLoading(true);
         }
 
-        if (!events.data) {
-            getEvents();
-            setLoading(true);
-        }
-
-    }, [newComics, characters])
+    }, [comics, characters])
 
     useEffect(() => {
         if (!isFirstVisit) {
@@ -78,19 +68,15 @@ export const Home = ({navigation}) => {
 
     const getContent = async () => {
         const data = await getThisWeeksComics();
-        setNewComics(data);
+        const parsedDataArr = data?.data.results.map((item) => ({...item, type: 'comic'}));
+        setComics(parsedDataArr);
         setLoading(false);
     }
 
     const getCharacters = async () => {
         const data = await getPopularCharacters();
-        setCharacters(data);
-        setLoading(false);
-    }
-
-    const getEvents = async () => {
-        const data = await getLatestEvents();
-        setEvents(data);
+        const parsedDataArr = data?.data.results.map((item) => ({...item, type: 'character'}));
+        setCharacters(parsedDataArr);
         setLoading(false);
     }
 
@@ -98,7 +84,7 @@ export const Home = ({navigation}) => {
         return (
             <TouchableHighlight
                 activeOpacity={0.6}
-                onPress={() => navigation.navigate('details', {comic: item})}
+                onPress={() => navigation.navigate('details', {selectedItem: item})}
             >
                 {<ListItem title={item.title} thumbnail={item.thumbnail}/>}
             </TouchableHighlight>
@@ -121,7 +107,6 @@ export const Home = ({navigation}) => {
                                      horizontal={true}
                                  >
                                  </FlatList>)}
-
                              </View>
                          )}
                          renderSectionHeader={({section: {title}}) => (

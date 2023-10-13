@@ -26,6 +26,7 @@
     "@types/react-native": "^0.71.6",
     "axios": "^1.4.0",
     "crypto-js": "^4.1.1",
+    "react-native-dotenv": "^3.4.9",
     "react-native-web": "^0.18.12"
   },
   "private": true

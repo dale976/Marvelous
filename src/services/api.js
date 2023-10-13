@@ -1,5 +1,8 @@
 import axios from 'axios';
 import * as CryptoJS from 'crypto-js';
+import {mockComics} from '../mocks/mockComics';
+import { USE_MOCK } from '@env';
+import {mockCharacters} from '../mocks/mockCharacters';
 
 const apiUrl = "https://gateway.marvel.com:443/v1/public";
 
@@ -17,10 +20,14 @@ const getAuthorizationString = () => {
 
 
 export const getThisWeeksComics = async () => {
-    const query = "&dateDescriptor=thisWeek&offset=0&limit=12&orderBy=issueNumber";
-    const req = await axios.get(`${apiUrl}/comics?${getAuthorizationString()}${query}`);
-    console.log('RESPONSE: ', req)
-    return req.data;
+    if (!USE_MOCK) {
+        const query = "&dateDescriptor=thisWeek&offset=0&limit=12&orderBy=issueNumber";
+        const req = await axios.get(`${apiUrl}/comics?${getAuthorizationString()}${query}`);
+        return req.data;
+    } else {
+        return mockComics;
+    }
+
 }
 
 export const getComicById = async (id) => {
@@ -29,15 +36,24 @@ export const getComicById = async (id) => {
 }
 
 export const getPopularCharacters = async () => {
-    const query = "&orderBy=-modified&limit=12";
-    const req = await axios.get(`${apiUrl}/events/238/characters?${getAuthorizationString()}${query}`);
-    return req.data;
+    if (!USE_MOCK) {
+        const query = "&orderBy=-modified&limit=12";
+        const req = await axios.get(`${apiUrl}/events/238/characters?${getAuthorizationString()}${query}`);
+        return req.data;
+    } else {
+        return mockCharacters;
+    }
 }
 
 export const getCharacters = async (id) => {
-    const query = "&orderBy=-modified&limit=12";
-    const req = await axios.get(`${apiUrl}/comics/${id}/characters?${getAuthorizationString()}${query}`);
-    return req.data;
+    if(!USE_MOCK) {
+        const query = "&orderBy=-modified&limit=12";
+        const req = await axios.get(`${apiUrl}/comics/${id}/characters?${getAuthorizationString()}${query}`);
+        return req.data;
+    } else {
+        return mockCharacters;
+    }
+
 }
 
 export const getLatestEvents = async () => {
