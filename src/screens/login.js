@@ -8,29 +8,25 @@ import {
     TextInput,
     TouchableOpacity, ActivityIndicator,
 } from 'react-native';
-import {FIREBASE_AUTH} from '../../FirebaseConfig';
-import {signInWithEmailAndPassword, createUserWithEmailAndPassword} from 'firebase/auth';
+
 
 import logo from '../../assets/m_logo.png';
+import {isSignedIn, signIn, signUp} from '../services/auth';
 
 export const Login = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const auth = FIREBASE_AUTH;
 
-    const signIn = async () => {
-        let loggedIn = false;
+
+    const onSignIn = async () => {
         setLoading(true);
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            loggedIn = true;
+            await signIn(email, password);
         } catch (error) {
-            loggedIn = false;
-            console.log(error);
-            alert('Sign in failed: ' + error.message);
+            console.log('Sign in error: ', error.message);
         } finally {
-            if (loggedIn) {
+            if (isSignedIn()) {
                 navigation.reset({
                     index: 0,
                     routes: [{name: 'home'}],
@@ -40,12 +36,10 @@ export const Login = ({navigation}) => {
         }
     }
 
-    const signUp = async () => {
+    const onSignUp = async () => {
         setLoading(true);
         try {
-            const response = await createUserWithEmailAndPassword(auth, email, password);
-            console.log(response);
-            alert('Account created! Check your emails!');
+            await signUp(email, password);
         } catch (error) {
             console.log(error)
             alert('Signup Failed: ' + error.message);
@@ -62,7 +56,7 @@ export const Login = ({navigation}) => {
                 <TextInput
                     style={styles.TextInput}
                     placeholder="Email."
-                    placeholderTextColor="white"
+                    placeholderTextColor="#1d2158"
                     onChangeText={(email) => setEmail(email)}
                 />
             </View>
@@ -70,7 +64,7 @@ export const Login = ({navigation}) => {
                 <TextInput
                     style={styles.TextInput}
                     placeholder="Password."
-                    placeholderTextColor="white"
+                    placeholderTextColor="#1d2158"
 
                     secureTextEntry={true}
                     onChangeText={(password) => setPassword(password)}
@@ -79,10 +73,10 @@ export const Login = ({navigation}) => {
             <TouchableOpacity>
                 <Text style={styles.forgot_button}>Forgot Password?</Text>
             </TouchableOpacity>
-            {loading ? (<ActivityIndicator />) : (<TouchableOpacity style={styles.loginBtn} onPress={signIn}>
+            {loading ? (<ActivityIndicator />) : (<TouchableOpacity style={styles.loginBtn} onPress={onSignIn}>
                 <Text style={styles.loginText}>LOGIN</Text>
             </TouchableOpacity>)}
-            <TouchableOpacity onPress={signUp}>
+            <TouchableOpacity onPress={onSignUp}>
                 <Text style={styles.create_button}>Create Account</Text>
             </TouchableOpacity>
         </View>
@@ -91,7 +85,7 @@ export const Login = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#1d2158",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -101,28 +95,30 @@ const styles = StyleSheet.create({
         width: 150,
     },
     inputView: {
-        backgroundColor: "#1d2158",
+        backgroundColor: "#ffb400",
         borderRadius: 30,
         width: "70%",
         height: 45,
         marginBottom: 20,
         alignItems: "center",
-        color: 'white'
+        color: '#1d2158'
     },
     TextInput: {
         height: 50,
         flex: 1,
         padding: 10,
         marginLeft: 20,
-        color: 'white',
+        color: '#1d2158',
     },
     forgot_button: {
         height: 30,
         marginBottom: 30,
+        color: '#ffb400'
     },
     create_button: {
         height: 30,
         marginTop: 30,
+        color: '#ffb400'
     },
     loginBtn: {
         width: "80%",
@@ -131,9 +127,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 40,
-        backgroundColor: "#1d2158",
+        backgroundColor: "#ffb400",
     },
     loginText: {
-        color: 'white'
+        color: '#1d2158'
     }
 });

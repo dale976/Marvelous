@@ -3,35 +3,31 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {Details, Home, Favourites, Login, Search, Settings} from './src/screens';
 import {ThemeProvider} from '@rneui/themed';
+import {isSignedIn} from './src/services/auth';
 
 const Stack = createNativeStackNavigator();
-
-
-
-
-
-
 
 export default function App() {
     return (
         <ThemeProvider>
             <NavigationContainer>
                 <Stack.Navigator>
-                    <Stack.Screen
-                        name='login'
-                        component={Login}
-                        options={{title: 'Sign In'}}
-                    />
-                    <Stack.Screen
-                        name='home'
-                        component={Home}
-                        options={{title: 'Home'}}
-                    />
-                    <Stack.Screen
-                        name='details'
-                        component={Details}
-                        options={{title: 'Details'}}
-                    />
+                    {/*<Stack.Screen*/}
+                    {/*    name='login'*/}
+                    {/*    component={Login}*/}
+                    {/*    options={{title: 'Sign In'}}*/}
+                    {/*/>*/}
+                    {/*<Stack.Screen*/}
+                    {/*    name='home'*/}
+                    {/*    component={Home}*/}
+                    {/*    options={{title: 'Home'}}*/}
+
+                    {/*/>*/}
+                    {/*<Stack.Screen*/}
+                    {/*    name='details'*/}
+                    {/*    component={Details}*/}
+                    {/*    options={{title: 'Details'}}*/}
+                    {/*/>*/}
                     {/*<Stack.Screen*/}
                     {/*    name='search'*/}
                     {/*    component={Search}*/}
@@ -42,11 +38,11 @@ export default function App() {
                     {/*    component={Favourites}*/}
                     {/*    options={{title: 'Favourites'}}*/}
                     {/*/>*/}
-                    {/*<Stack.Screen*/}
-                    {/*    name='settings'*/}
-                    {/*    component={Settings}*/}
-                    {/*    options={{title: 'Settings'}}*/}
-                    {/*/>*/}
+                    <Stack.Screen
+                        name='settings'
+                        component={Settings}
+                        options={{title: 'Settings'}}
+                    />
                 </Stack.Navigator>
             </NavigationContainer>
         </ThemeProvider>

@@ -14,6 +14,8 @@ import {getPopularCharacters, getThisWeeksComics} from '../services/api';
 import {ListItem} from '../components/listItem';
 import {Header} from '../components/header';
 
+import {Navbar} from '../components/navbar/navbar';
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -24,9 +26,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginLeft: 8,
-        marginTop: 16,
+        marginTop: 0,
         color: '#ffb400',
     },
+    button: {
+        color: '#ffb400',
+    }
 
 });
 
@@ -35,6 +40,7 @@ export const Home = ({navigation}) => {
     const [comics, setComics] = useState([]);
     const [characters, setCharacters] = useState({})
     const [loading, setLoading] = useState(false);
+
 
     const sectionData = [
         {
@@ -114,6 +120,7 @@ export const Home = ({navigation}) => {
                          )}
             >
             </SectionList>
+            <Navbar navigation={navigation} screen='home' />
         </SafeAreaView>
     );
 }

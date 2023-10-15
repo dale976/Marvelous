@@ -1,5 +1,6 @@
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import {Navbar} from '../components/navbar/navbar';
 
 export const Search = ({ navigation, route }) => {
 
@@ -9,6 +10,7 @@ export const Search = ({ navigation, route }) => {
             <Text>Search</Text>
             <StatusBar style="auto" />
             <Button title="Go to home" onPress={() => navigation.navigate('home')} />
+            <Navbar navigation={navigation} screen='search'/>
         </View>
     );
 
@@ -17,8 +19,10 @@ export const Search = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexGrow: 1,
+        // marginTop: StatusBar.currentHeight || 0,
+        marginTop: 'auto',
+        marginBottom: 'auto',
+        backgroundColor: '#1d2158',
     },
 });
