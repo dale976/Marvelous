@@ -1,10 +1,11 @@
 import axios from 'axios';
 import * as CryptoJS from 'crypto-js';
 import {mockComics} from '../mocks/mockComics';
-import { USE_MOCK } from '@env';
 import {mockCharacters} from '../mocks/mockCharacters';
 
+const PRODUCTION = false;
 const apiUrl = "https://gateway.marvel.com:443/v1/public";
+console.log("PRODUCTION: ", PRODUCTION);
 
 const getAuthorizationString = () => {
     const currentDate = new Date();
@@ -20,7 +21,7 @@ const getAuthorizationString = () => {
 
 
 export const getThisWeeksComics = async () => {
-    if (!USE_MOCK) {
+    if (PRODUCTION) {
         const query = "&dateDescriptor=thisWeek&offset=0&limit=12&orderBy=issueNumber";
         const req = await axios.get(`${apiUrl}/comics?${getAuthorizationString()}${query}`);
         return req.data;
@@ -36,7 +37,7 @@ export const getComicById = async (id) => {
 }
 
 export const getPopularCharacters = async () => {
-    if (!USE_MOCK) {
+    if (PRODUCTION) {
         const query = "&orderBy=-modified&limit=12";
         const req = await axios.get(`${apiUrl}/events/238/characters?${getAuthorizationString()}${query}`);
         return req.data;
@@ -46,7 +47,7 @@ export const getPopularCharacters = async () => {
 }
 
 export const getCharacters = async (id) => {
-    if(!USE_MOCK) {
+    if(PRODUCTION) {
         const query = "&orderBy=-modified&limit=12";
         const req = await axios.get(`${apiUrl}/comics/${id}/characters?${getAuthorizationString()}${query}`);
         return req.data;
@@ -64,5 +65,11 @@ export const getLatestEvents = async () => {
 
 export const getStories = async (id) => {
     const req = await axios.get(`${apiUrl}/stories/${id}?${getAuthorizationString()}`);
+    return req.data;
+}
+
+export const searchComics = async (title) => {
+    const query = `&titleStartsWith=${title}&offset=0&limit=20`;
+    const req = await axios.get(`${apiUrl}/comics?${getAuthorizationString()}${query}`);
     return req.data;
 }

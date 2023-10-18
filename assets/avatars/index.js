@@ -11,7 +11,7 @@ import ww from './wonder_woman_icon.png';
 export const avatars = [
     {
         name: 'Batman',
-        logo: batmanLogo,
+        logo: 'batman_icon.png',
     },
     {
         name: 'Deadpool',

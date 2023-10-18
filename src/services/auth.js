@@ -22,7 +22,6 @@ export const signIn = async (email, password) => {
 export const signUp = async (email, password) => {
     try {
         const response = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
-        console.log(response?.user?.uid);
         await setUser(response?.user?.uid);
         userInstance = FIREBASE_AUTH.currentUser;
         alert('Account created! Check your emails!');

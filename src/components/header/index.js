@@ -1,5 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import {Avatar} from '@rneui/themed';
+import {avatars} from '../../../assets/avatars';
+
 
 const styles = StyleSheet.create(
     {
@@ -24,13 +26,14 @@ const styles = StyleSheet.create(
     }
 )
 
-export const Header = ({name, icon}) => {
+export const Header = ({name, avatar}) => {
+    const found = avatars.find(a => a.name === avatar);
     return (
         <View style={styles.avatarContainer}>
             <Avatar
                 size={64}
                 rounded
-                source={icon}
+                source={found && found.logo}
             />
             <Text style={styles.avatarText}>{`Welcome back, \n${name}.`}</Text>
         </View>

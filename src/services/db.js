@@ -25,11 +25,12 @@ export const setUser = async (uid) => {
 }
 
 export const updateUser = async (uid, {displayName, avatar, favourites}) => {
+    const user = await getUser(uid);
     const docData = {
         uid: uid,
-        displayName,
-        favourites: favourites || [],
-        avatar,
+        displayName: displayName || user.displayName,
+        favourites: favourites || user.favourites,
+        avatar: avatar || user.avatar,
     };
-    await updateDoc(doc(FIREBASE_DB, "users", "user"), docData);
+    await updateDoc(doc(FIREBASE_DB, 'users', 'user'), docData);
 }

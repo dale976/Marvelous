@@ -30,11 +30,8 @@ export const Settings = ({navigation, route}) => {
     }
 
     const onSave = async () => {
-        await updateUser(getUserInstance().uid, {
-            displayName: name,
-            avatar,
-            favourites: ['some', "thing"]
-        })
+        const uid = await getUserInstance().uid;
+        await updateUser(uid, {displayName: name, avatar: avatar})
     }
 
     const onEntry = async () => {
@@ -56,6 +53,9 @@ export const Settings = ({navigation, route}) => {
     return (
         <View style={styles.container}>
             <StatusBar style="auto"/>
+            <View>
+                <Text style={{color: '#ffb400', marginBottom: 6}}>Your display name</Text>
+            </View>
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.TextInput}
@@ -64,13 +64,13 @@ export const Settings = ({navigation, route}) => {
                     onChangeText={(n) => setName(n)}
                 />
             </View>
+            <Text style={{color: '#ffb400', marginBottom: 6}}>Choose your Hero</Text>
             <SelectDropdown
                 data={avatars.map(a => a.name)}
                 buttonStyle={styles.inputView}
                 buttonTextStyle={{...styles.TextInput, textAlignVertical: 'center', textAlign: 'center'}}
                 defaultButtonText={avatar || 'Choose an avatar'}
                 onSelect={(selectedItem, index) => {
-                    console.log(selectedItem, index)
                     setAvatar(selectedItem);
                     getLogo(selectedItem)
                 }}
@@ -86,10 +86,10 @@ export const Settings = ({navigation, route}) => {
                 rounded
                 source={icon}
             />)}
-            <TouchableOpacity onPress={onSave} style={styles.sign_out_button}>
+            <TouchableOpacity onPress={onSave} style={styles.saveButton}>
                 <Text style={{color: '#1d2158'}}>Save</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onSignOut} style={styles.sign_out_button}>
+            <TouchableOpacity onPress={onSignOut} style={styles.signOutButton}>
                 <Text style={{color: '#1d2158'}}>Sign Out</Text>
             </TouchableOpacity>
             <Navbar navigation={navigation} screen='settings'/>
@@ -107,8 +107,17 @@ const styles = StyleSheet.create({
         justifyContent: "center",
 
     },
-    sign_out_button: {
+    signOutButton: {
         width: "80%",
+        borderRadius: 25,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 90,
+        backgroundColor: "rgba(255, 180, 0, 0.7)",
+    },
+    saveButton: {
+        width: "70%",
         borderRadius: 25,
         height: 50,
         alignItems: "center",

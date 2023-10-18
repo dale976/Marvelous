@@ -1,6 +1,5 @@
 import {
     ImageBackground,
-    StyleSheet,
     SafeAreaView,
     Text,
     View,
@@ -9,67 +8,17 @@ import {
     TouchableHighlight, ActivityIndicator
 } from 'react-native';
 import {useEffect, useState} from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from "expo-linear-gradient"
+import {LinearGradient} from "expo-linear-gradient"
 import {ListItem} from '../components/listItem';
 import {getCharacters} from '../services/api'
+import {Icon} from '@rneui/themed';
+import {containsFavourite, getFavourites, setFavourites} from '../services/favourites';
+import {commonStyles} from '../styles';
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: StatusBar.currentHeight || 0,
-        backgroundColor: '#1d2158',
-    },
-    imgBackground: {
-        flex: 1,
-        width: "100%",
-        alignItems: "center",
-    },
-    linearGradient: {
-        width: '100%',
-        height: '100%',
-        opacity: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    textContainer: {
-        flex: 1,
-        alignSelf: 'flex-start',
-        justifyContent: 'center',
-        marginTop: 300,
-        width: "100%",
-    },
-    title: {
-        fontSize: 18,
-        height: 60,
-        width: 'auto',
-        fontWeight: 'bold',
-        color: '#ffb400',
-        marginLeft: 20,
-        marginRight: 20,
-        textAlign: 'left'
-    },
-    text: {
-        fontSize: 14,
-        height: 60,
-        width: 'auto',
-        fontWeight: 'bold',
-        color: '#ffb400',
-        marginLeft: 20,
-        marginRight: 6,
-        textAlign: 'left'
-    },
-    listTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginLeft: 20,
-        marginTop: 0,
-        color: '#ffb400',
-    },
-})
 
-export const Details = ({ navigation, route }) => {
+export const Details = ({navigation, route}) => {
     const {selectedItem} = route.params
+    const [isFavourite, setIsFavourite] = useState(false);
     const [characters, setCharacters] = useState({});
     const [loading, setLoading] = useState(false);
     const image = {uri: `${selectedItem?.thumbnail?.path}.${selectedItem?.thumbnail?.extension}`};
@@ -82,11 +31,30 @@ export const Details = ({ navigation, route }) => {
     ]
 
     useEffect(() => {
+        fetchFavourites();
+
         if (!characters.data && selectedItem?.characters?.available > 0) {
             setLoading(true);
             fetchCharacters()
         }
     })
+
+    const fetchFavourites = async () => {
+        const value = await containsFavourite(selectedItem.id)
+        setIsFavourite(value);
+    }
+
+    const onFavouritePressed = async () => {
+        const favourites = await getFavourites()
+        if (isFavourite) {
+            const idx = favourites.findIndex(f => f.id === selectedItem?.id)
+            favourites.splice(idx, 1)
+        } else {
+            favourites.push({id: selectedItem.id, title: selectedItem.title});
+        }
+        await setFavourites(favourites)
+        setIsFavourite(!isFavourite)
+    }
 
     const fetchCharacters = async () => {
         const data = await getCharacters(selectedItem.id);
@@ -95,7 +63,7 @@ export const Details = ({ navigation, route }) => {
     }
 
     const getSaleDate = (dates) => {
-        if(!dates) return null;
+        if (!dates) return null;
         const saleDate = dates.find(d => d.type === 'onsaleDate');
         let date;
         if (saleDate) {
@@ -105,57 +73,65 @@ export const Details = ({ navigation, route }) => {
     }
 
     const getSalePrice = (prices) => {
-        if(!prices) return null;
+        if (!prices) return null;
         const salePrice = prices.find(p => p.type === 'printPrice');
         return salePrice ? salePrice.price : null
-
     }
 
     const renderItem = (item) => {
         return (
             <TouchableHighlight
                 activeOpacity={0.6}
-                onPress={() => navigation.navigate('details', {selectedItem: item})}
+                onPress={() => navigation.navigate('character', {selectedItem: item})}
             >
                 {<ListItem title={item.title} thumbnail={item.thumbnail}/>}
             </TouchableHighlight>
         )
     }
+    return (image &&
+        <SafeAreaView style={commonStyles.container}>
+            <View style={commonStyles.container}>
 
-
-    return ( image &&
-        <SafeAreaView style={styles.container}>
-            <View style={styles.container}>
-                <ImageBackground source={image} style={styles.imgBackground}>
+                <ImageBackground source={image} style={commonStyles.imgBackground}>
                     <LinearGradient
                         colors={['transparent', '#1d2158']}
                         start={[1, 0]}
                         end={[0.4, 0.5]}
                         location={[0.25, 0.4, 1]}
-                        style={styles.linearGradient}
+                        style={commonStyles.linearGradient}
                     >
-                        <View style={styles.textContainer}>
-                            <Text style={styles.title}>{selectedItem.title}</Text>
-                            <View style={{flexDirection: "row"}}><Text style={styles.text}>On Sale: {getSaleDate(selectedItem?.dates)}</Text><Text style={styles.text}>£{getSalePrice(selectedItem?.prices)}</Text></View>
-                            {loading && <ActivityIndicator />}
+                        <View style={{alignSelf: 'flex-end'}}>
+                            <Icon
+                                raised
+                                name='heart'
+                                type='font-awesome'
+                                color={isFavourite ? 'red' : 'grey'}
+                                onPress={() => onFavouritePressed()}/>
+                        </View>
+                        <View style={commonStyles.metaDataContainer}>
+                            <Text style={commonStyles.title}>{selectedItem.title}</Text>
+                            <View style={{flexDirection: "row"}}><Text style={commonStyles.text}>On
+                                Sale: {getSaleDate(selectedItem?.dates)}</Text><Text
+                                style={commonStyles.text}>£{getSalePrice(selectedItem?.prices)}</Text></View>
+                            {loading && <ActivityIndicator/>}
                             {characters.data?.results && <SectionList
-                                         sections={sectionData}
-                                         keyExtractor={(item, index) => item + index}
-                                         stickySectionHeadersEnabled={false}
-                                         renderItem={({item}) => (
-                                             <View>
-                                                 <FlatList
-                                                     data={item}
-                                                     renderItem={({item}) => renderItem(item)}
-                                                     keyExtractor={item => item.id}
-                                                     horizontal={true}
-                                                 >
-                                                 </FlatList>
-                                             </View>
-                                         )}
-                                         renderSectionHeader={({section: {title}}) => (
-                                             <Text style={styles.listTitle}>{title}</Text>
-                                         )}
+                                sections={sectionData}
+                                keyExtractor={(item, index) => item + index}
+                                stickySectionHeadersEnabled={false}
+                                renderItem={({item}) => (
+                                    <View>
+                                        <FlatList
+                                            data={item}
+                                            renderItem={({item}) => renderItem(item)}
+                                            keyExtractor={item => item.id}
+                                            horizontal={true}
+                                        >
+                                        </FlatList>
+                                    </View>
+                                )}
+                                renderSectionHeader={({section: {title}}) => (
+                                    <Text style={commonStyles.listTitle}>{title}</Text>
+                                )}
                             >
                             </SectionList>}
                         </View>
