@@ -8,16 +8,13 @@ import {
     TextInput,
     TouchableOpacity, ActivityIndicator,
 } from 'react-native';
-
-
 import logo from '../../assets/m_logo.png';
-import {isSignedIn, signIn, signUp} from '../services/auth';
+import {getUserInstance, signIn, signUp} from '../services/auth';
 
 export const Login = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-
 
     const onSignIn = async () => {
         setLoading(true);
@@ -26,7 +23,7 @@ export const Login = ({navigation}) => {
         } catch (error) {
             console.log('Sign in error: ', error.message);
         } finally {
-            if (isSignedIn()) {
+            if (getUserInstance()) {
                 navigation.reset({
                     index: 0,
                     routes: [{name: 'home'}],
@@ -44,6 +41,12 @@ export const Login = ({navigation}) => {
             console.log(error)
             alert('Signup Failed: ' + error.message);
         } finally {
+            if (getUserInstance()) {
+                navigation.reset({
+                    index: 0,
+                    routes: [{name: 'home'}],
+                });
+            }
             setLoading(false)
         }
     }

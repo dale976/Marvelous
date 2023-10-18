@@ -3,10 +3,10 @@ import {StatusBar} from 'expo-status-bar';
 import {Navbar} from '../components/navbar/navbar';
 import React, {useEffect, useState} from 'react';
 import SelectDropdown from 'react-native-select-dropdown'
-import {logout} from '../services/auth';
+import {getUserInstance, logout} from '../services/auth';
 import {Avatar} from '@rneui/themed';
 import {avatars} from '../../assets/avatars';
-import {storeData} from '../services/storage';
+import {getUser, updateUser} from '../services/db';
 
 
 export const Settings = ({navigation, route}) => {
@@ -16,15 +16,10 @@ export const Settings = ({navigation, route}) => {
     const [icon, setIcon] = useState('');
 
     useEffect(() => {
-        if (avatar && !icon) {
-            getLogo(avatar);
+        if (!name && !avatar) {
+            onEntry();
         }
-
-        storeData({
-            avatar,
-            name,
-        })
-    }, [name, avatar]);
+    });
 
     const onSignOut = async () => {
         await logout();
@@ -34,10 +29,26 @@ export const Settings = ({navigation, route}) => {
         });
     }
 
+    const onSave = async () => {
+        await updateUser(getUserInstance().uid, {
+            displayName: name,
+            avatar,
+            favourites: ['some', "thing"]
+        })
+    }
+
+    const onEntry = async () => {
+        const user = await getUser(getUserInstance().uid);
+        if (user) {
+            setName(user.displayName);
+            setAvatar(user.avatar);
+            getLogo(user.avatar);
+        }
+    }
+
     const getLogo = (name) => {
         const found = avatars.find(a => a.name === name);
         if (found) {
-
             setIcon(found.logo);
         }
     }
@@ -70,11 +81,14 @@ export const Settings = ({navigation, route}) => {
                     return item
                 }}
             />
-            <Avatar
+            {icon && (<Avatar
                 size={64}
                 rounded
                 source={icon}
-            />
+            />)}
+            <TouchableOpacity onPress={onSave} style={styles.sign_out_button}>
+                <Text style={{color: '#1d2158'}}>Save</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={onSignOut} style={styles.sign_out_button}>
                 <Text style={{color: '#1d2158'}}>Sign Out</Text>
             </TouchableOpacity>

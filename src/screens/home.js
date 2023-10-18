@@ -15,6 +15,9 @@ import {ListItem} from '../components/listItem';
 import {Header} from '../components/header';
 
 import {Navbar} from '../components/navbar/navbar';
+import {avatars} from '../../assets/avatars';
+import {getUser} from '../services/db';
+import {getUserInstance} from '../services/auth';
 
 const styles = StyleSheet.create({
     container: {
@@ -32,7 +35,6 @@ const styles = StyleSheet.create({
     button: {
         color: '#ffb400',
     }
-
 });
 
 export const Home = ({navigation}) => {
@@ -40,7 +42,9 @@ export const Home = ({navigation}) => {
     const [comics, setComics] = useState([]);
     const [characters, setCharacters] = useState({})
     const [loading, setLoading] = useState(false);
-
+    const [name, setName] = useState('');
+    const [avatar, setAvatar] = useState('');
+    const [icon, setIcon] = useState('');
 
     const sectionData = [
         {
@@ -72,6 +76,27 @@ export const Home = ({navigation}) => {
         }
     }, [isFirstVisit])
 
+    useEffect(() => {
+        getUserProfile();
+    })
+
+    const getUserProfile = async () => {
+        const user = await getUser(getUserInstance().uid);
+        if (user) {
+            if (user.avatar !== avatar) {
+                setAvatar(user.avater);
+                const found = avatars.find(a => a.name === user.avatar);
+                if (found) {
+                    setIcon(found.logo);
+                }
+            }
+
+            if (user.displayName !== name) {
+                setName(user.displayName);
+            }
+        }
+    }
+
     const getContent = async () => {
         const data = await getThisWeeksComics();
         const parsedDataArr = data?.data.results.map((item) => ({...item, type: 'comic'}));
@@ -102,7 +127,7 @@ export const Home = ({navigation}) => {
             <SectionList style={styles.container}
                          sections={sectionData}
                          keyExtractor={(item, index) => item + index}
-                         ListHeaderComponent={isFirstVisit && (<Header/>)}
+                         ListHeaderComponent={isFirstVisit && (<Header name={name || 'hero'} icon={icon}/>)}
                          stickySectionHeadersEnabled={false}
                          renderItem={({item}) => (
                              <View>
